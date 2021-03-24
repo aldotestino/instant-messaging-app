@@ -1,0 +1,28 @@
+name: Release
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 15.x
+      - name: npm install, build, and publish
+        run: |
+          npm install
+          npm run compile
+          npm run release
+        env:
+          GH_TOKEN: ${{ secrets.github_token }}

@@ -1,0 +1,25 @@
+{
+  "appId": "dev.instant-messaging.app",
+  "productName": "Instant Messaging",
+  "compression": "store",
+  "win": {
+    "icon": "./static/logo_win.png"
+  },
+  "mac": {
+    "identity": null,
+    "icon": "./static/logo_mac.icns",
+    "category": "public.app-category.utilities"
+  },
+  "linux": {
+    "target": "AppImage",
+    "icon": "./static/logo_win.png"
+  },
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "aldotestino",
+      "repo": "instant-messaging-app",
+      "releaseType": "release"
+    }
+  ]
+}

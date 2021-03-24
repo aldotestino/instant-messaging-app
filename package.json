@@ -1,0 +1,38 @@
+{
+  "name": "instant-messaging-app",
+  "version": "1.0.0",
+  "description": "Chat Better, chat Faster",
+  "main": "index.js",
+  "scripts": {
+    "dev": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "package": "electron-builder --publish never",
+    "release": "electron-builder --publish always"
+  },
+  "keywords": [
+    "chat",
+    "electron"
+  ],
+  "author": "aldotestino",
+  "license": "MIT",
+  "dependencies": {
+    "source-map-support": "^0.5.19"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.2.5",
+    "electron": "^12.0.1",
+    "electron-builder": "^22.10.5",
+    "electron-webpack": "^2.8.2",
+    "electron-webpack-ts": "^4.0.1",
+    "typescript": "^4.2.3",
+    "webpack": "^4.46.0"
+  },
+  "electronWebpack": {
+    "title": true,
+    "staticSourceDirectory": "src/static",
+    "renderer": null,
+    "main": {
+      "sourceDirectory": "src"
+    }
+  }
+}
