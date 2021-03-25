@@ -1,7 +1,14 @@
-import {app, BrowserWindow, ipcMain, Notification} from "electron";
-const isDevelopment = process.env.NODE_ENV !== "production";
+import { app, BrowserWindow, ipcMain, Notification, Tray, Menu } from 'electron';
+import path from 'path';
+import { Message } from './types';
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 let mainWindow: BrowserWindow | null = null;
+let tray: Tray | null = null;
+let isQuitting: boolean;
+let dontDisturb: boolean;
+
+app.on('before-quit', () => isQuitting = true);
 
 function createMainWindow() {
   const window = new BrowserWindow({
@@ -19,6 +26,39 @@ function createMainWindow() {
 
   window.setMenuBarVisibility(false);
 
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Mostra/nascondi finestra',
+      click: () => {
+        if(window.isVisible()) {
+          app.dock.hide();
+          window.hide();
+        } else {
+          app.dock.show();
+          window.show();
+        }
+      }
+    },
+    {
+      label: 'Non disturbare',
+      type: 'checkbox',
+      click: () => dontDisturb = !dontDisturb
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: 'Esci',
+      click: () => {
+        isQuitting = true;
+        app.quit();
+      }
+    }
+  ]);
+
+  tray = new Tray(path.join(__dirname, '../static/tray_w.png'));
+  tray.setContextMenu(contextMenu);
+
   window.loadURL(
     isDevelopment
       ? 'http://localhost:3000'
@@ -29,11 +69,16 @@ function createMainWindow() {
     window.webContents.openDevTools();
   }
 
-  window.on("closed", () => {
-    mainWindow = null;
+  window.on('close', (e) => {
+    if(!isQuitting) {
+      e.preventDefault();
+      app.dock.hide();
+      window.hide();
+      e.returnValue = false;
+    }
   });
 
-  window.webContents.on("devtools-opened", () => {
+  window.webContents.on('devtools-opened', () => {
     window.focus();
     setImmediate(() => {
       window.focus();
@@ -43,34 +88,34 @@ function createMainWindow() {
   return window;
 }
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-app.on("activate", () => {
+app.on('activate', () => {
   if (mainWindow === null) {
+    tray?.destroy();
     mainWindow = createMainWindow();
   }
 });
 
-app.on("ready", () => {
+app.on('ready', () => {
   mainWindow = createMainWindow();
 });
 
-interface Message {
-  content: string,
-  user: {
-    username: string,
-    avatar: string,
-  }
-}
-
 ipcMain.on('@notifications/new_message', (event, newMessage: Message) => {
-  const notification = {
+  const notification = new Notification({
     title: `Nuovo messaggio da @${newMessage.user.username}`,
     body: newMessage.content,
-  };
-  new Notification(notification).show();
+  });
+  if(dontDisturb) {
+    notification.silent = true;
+  }
+  notification.show();
+  notification.on('click', () => {
+    app.dock.show();
+    mainWindow?.show();
+  });
 });
