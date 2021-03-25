@@ -3,16 +3,16 @@
   "productName": "Instant Messaging",
   "compression": "store",
   "win": {
-    "icon": "./static/icon_win.png"
+    "icon": "./icons/icon_win.png"
   },
   "mac": {
     "identity": null,
-    "icon": "./static/icon_mac.icns",
+    "icon": "./icons/icon_mac.icns",
     "category": "public.app-category.utilities"
   },
   "linux": {
     "target": "AppImage",
-    "icon": "./static/icon_win.png"
+    "icon": "./icons/icon_win.png"
   },
   "publish": [
     {

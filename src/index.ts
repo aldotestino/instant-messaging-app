@@ -1,7 +1,7 @@
-import { app, BrowserWindow, ipcMain, Notification, Tray, Menu } from 'electron';
-import path from 'path';
+import { app, BrowserWindow, ipcMain, Notification, Tray, Menu, nativeImage } from 'electron';
+import * as path from 'path';
+import is from 'electron-is';
 import { Message } from './types';
-const isDevelopment = process.env.NODE_ENV !== 'production';
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
@@ -56,16 +56,16 @@ function createMainWindow() {
     }
   ]);
 
-  tray = new Tray(path.join(__dirname, '../static/tray_w.png'));
+  tray = new Tray(nativeImage.createFromPath(path.join(__static, 'trayTemplate.png')));
   tray.setContextMenu(contextMenu);
 
   window.loadURL(
-    isDevelopment
+    is.dev()
       ? 'http://localhost:3000'
       : 'https://instant-messaging.vercel.app',
   );
 
-  if (isDevelopment) {
+  if (is.dev()) {
     window.webContents.openDevTools();
   }
 

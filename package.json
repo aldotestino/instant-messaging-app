@@ -16,6 +16,7 @@
   "author": "aldotestino",
   "license": "MIT",
   "dependencies": {
+    "electron-is": "^3.0.0",
     "source-map-support": "^0.5.19"
   },
   "devDependencies": {
